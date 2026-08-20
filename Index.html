@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Professional dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <div class="logo-icon" aria-hidden="true"></div>
+            <span class="logo-text">Dashboard</span>
+        </div>
+        <div class="topbar-actions">
+            <button id="sidebar-toggle" class="icon-btn" aria-label="Toggle sidebar">☰</button>
+            <input class="search" placeholder="Search..." aria-label="Search"/>
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Sidebar navigation">
+            <nav>
+                <ul>
+                    <li class="active">Home</li>
+                    <li>Analytics</li>
+                    <li>Security</li>
+                    <li>Mobile</li>
+                    <li>Settings</li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <section class="hero">
+                <h1>Welcome back — here's your summary</h1>
+                <p class="muted">Overview of key metrics and recent activity</p>
+            </section>
+
+            <section class="metrics">
+                <div class="card">
+                    <div class="card-title">Revenue</div>
+                    <div class="card-value" data-value="125430">€0</div>
+                    <div class="card-sub">Month-to-date</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Active users</div>
+                    <div class="card-value" data-value="8421">0</div>
+                    <div class="card-sub">Last 30 days</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Completion Rate</div>
+                    <div class="card-value" data-value="92">0%</div>
+                    <div class="card-sub">Tasks completed</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">New signups</div>
+                    <div class="card-value" data-value="512">0</div>
+                    <div class="card-sub">This week</div>
+                </div>
+            </section>
+
+            <section class="charts">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Revenue (last 12 months)</h3>
+                    </div>
+                    <canvas id="revenueChart" height="120"></canvas>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Active users (last 12 months)</h3>
+                    </div>
+                    <canvas id="usersChart" height="120"></canvas>
+                </div>
+            </section>
+
+            <section class="panel table-panel">
+                <div class="panel-header">
+                    <h3>Recent activity</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr><th>User</th><th>Activity</th><th>Date</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Olivia</td><td>Signed up</td><td>2026-08-18</td><td class="ok">Completed</td></tr>
+                        <tr><td>Liam</td><td>Payment</td><td>2026-08-17</td><td class="ok">Completed</td></tr>
+                        <tr><td>Ava</td><td>Requested export</td><td>2026-08-16</td><td class="pending">Pending</td></tr>
+                        <tr><td>Noah</td><td>Password reset</td><td>2026-08-15</td><td class="ok">Completed</td></tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <span>© 2026 Your Company</span>
+        <span class="muted">Built with simple HTML, CSS and Chart.js</span>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Animate metric counters
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.card .card-value').forEach(function (el) {
+                const target = Number(el.dataset.value) || 0;
+                const isPercent = el.textContent.trim().endsWith('%');
+                let start = 0;
+                const duration = 1200;
+                const stepTime = Math.max(12, Math.floor(duration / (target || 60)));
+                const timer = setInterval(function () {
+                    start += Math.ceil(target / (duration / stepTime));
+                    if (start >= target) {
+                        start = target;
+                        clearInterval(timer);
+                    }
+                    el.textContent = isPercent ? start + '%' : (start.toLocaleString());
+                }, stepTime);
+            });
+
+            // Simple Chart.js examples
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [12000,14000,13000,15000,17000,16000,18000,19000,20000,22000,24000,26000],
+                        borderColor: 'rgba(66,133,244,0.9)',
+                        backgroundColor: 'rgba(66,133,244,0.12)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            const usersCtx = document.getElementById('usersChart').getContext('2d');
+            new Chart(usersCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+                    datasets: [{
+                        label: 'Active Users',
+                        data: [400,450,420,480,520,500,540,580,600,620,640,700],
+                        backgroundColor: 'rgba(0,200,83,0.8)'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        });
+    </script>
+</body>
+</html>
